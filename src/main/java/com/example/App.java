@@ -46,7 +46,8 @@ public class App {
             System.out.println("1. Add Student");
             System.out.println("2. Display Students");
             System.out.println("3. Search Student by ID");
-            System.out.println("4. Exit");
+            System.out.println("4. Count Students");
+            System.out.println("5. Exit");
             System.out.print("Enter your choice: ");
 
             String input = scanner.nextLine();
@@ -55,7 +56,7 @@ public class App {
             try {
                 choice = Integer.parseInt(input);
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number.");
+                System.out.println("❌ Invalid input. Please enter a number.");
                 continue;
             }
 
@@ -70,10 +71,13 @@ public class App {
                     searchStudentById();
                     break;
                 case 4:
-                    System.out.println("Exiting...");
+                    countStudents();
+                    break;
+                case 5:
+                    System.out.println("👋 Exiting...");
                     return;
                 default:
-                    System.out.println("Invalid choice. Try again.");
+                    System.out.println("❌ Invalid choice. Try again.");
             }
         }
     }
@@ -109,7 +113,7 @@ public class App {
     private static void displayStudents() {
         File file = new File(FILE_NAME);
         if (!file.exists()) {
-            System.out.println("No students found.");
+            System.out.println("📂 No students found.");
             return;
         }
 
@@ -119,8 +123,10 @@ public class App {
             boolean found = false;
 
             while ((line = br.readLine()) != null) {
-                System.out.println(line);
-                found = true;
+                if (!line.trim().isEmpty()) {
+                    System.out.println(line);
+                    found = true;
+                }
             }
 
             if (!found) {
@@ -167,6 +173,27 @@ public class App {
                 System.out.println("❌ Student with ID " + searchId + " not found.");
             }
 
+        } catch (IOException e) {
+            System.out.println("❌ Error reading file: " + e.getMessage());
+        }
+    }
+
+    private static void countStudents() {
+        File file = new File(FILE_NAME);
+        if (!file.exists()) {
+            System.out.println("📂 No student records found.");
+            return;
+        }
+
+        int count = 0;
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (!line.trim().isEmpty()) {
+                    count++;
+                }
+            }
+            System.out.println("👥 Total number of students: " + count);
         } catch (IOException e) {
             System.out.println("❌ Error reading file: " + e.getMessage());
         }
